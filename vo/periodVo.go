@@ -1,7 +1,8 @@
 package vo
 
 type Period struct {
-	DateCycle   string
-	DeletePaths string
-	LogFilePath string
+	DateCycle         string
+	DeletePaths       string
+	LogFilePath       string
+	DeleteOfDirectory string
 }

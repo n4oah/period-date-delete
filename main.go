@@ -14,7 +14,7 @@ import (
 var dateCycleSuffix = [...]string{"d", "m", "y"}
 
 var propertiy string = "period_delete.properties"
-var nowDate time.Time = time.Now()
+var nowDate time.Time = time.Now() //.AddDate(0, 0, -7)
 
 func main() {
 	log.Println("Period Delete Process Start.")
@@ -25,6 +25,7 @@ func main() {
 	period.DateCycle = props["dateCycle"]
 	period.DeletePaths = props["deletePaths"]
 	period.LogFilePath = props["logFilePath"]
+	period.DeleteOfDirectory = props["deleteOfDirectory"]
 
 	log.Println("Delete date cycle is " + period.DateCycle)
 
@@ -35,9 +36,12 @@ func main() {
 			if isdirectory, _ := io.IsDirectory(val); isdirectory == true {
 				for i, value := range io.FilePathWalkDir(val) {
 					fileInfo, _ := os.Stat(value)
+					// fileDate := fileInfo.ModTime()
 
 					log.Println("index: " + strconv.Itoa(i) + ", value: " + value + ", CreateTime: " + fileInfo.ModTime().Format("2006-01-02 15:04:05"))
 
+					log.Println(nowDate.Format("2006-01-02 15:04:05"))
+					// if fileDate.Year()
 				}
 			}
 		}
