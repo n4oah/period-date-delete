@@ -29,6 +29,8 @@ func main() {
 
 	log.Println("Delete date cycle is " + period.DateCycle)
 
+	// var
+
 	if err == nil {
 		var deletePaths []string = utils.RemoveArrayInSideSpace(strings.Split(props["deletePaths"], ","))
 
