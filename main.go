@@ -27,6 +27,11 @@ func main() {
 	period.LogFilePath = props["logFilePath"]
 	period.DeleteOfDirectory = props["deleteOfDirectory"]
 
+	if CheckDateCycle(period.DateCycle) == false {
+		log.Println("properties DateCycle format error.")
+		return
+	}
+
 	log.Println("Delete date cycle is " + period.DateCycle)
 
 	if err == nil {
@@ -58,9 +63,9 @@ func CompareDirInFiles(path string, dateCycle string) {
 
 func CheckDateCycle(str string) bool {
 	for _, val := range dateCycleSuffix {
-		if strings.HasSuffix(str, val) == false || utils.IsStringToInt(str[:len(str)-1]) == false {
-			return false
+		if strings.HasSuffix(str, val) == true && utils.IsStringToInt(str[:len(str)-1]) == true {
+			return true
 		}
 	}
-	return true
+	return false
 }
