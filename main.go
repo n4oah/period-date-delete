@@ -27,7 +27,7 @@ func main() {
 	period.LogFilePath = props["logFilePath"]
 	period.DeleteOfDirectory = props["deleteOfDirectory"]
 
-	if CheckDateCycle(period.DateCycle) == false {
+	if checkDateCycle(period.DateCycle) == false {
 		log.Println("properties DateCycle format error.")
 		return
 	}
@@ -35,37 +35,61 @@ func main() {
 	log.Println("Delete date cycle is " + period.DateCycle)
 
 	if err == nil {
+		year, month, day := getDateCycle(period.DateCycle)
+		compareDate := nowDate.AddDate(year, month, day)
+
+		log.Println(compareDate.Format("2006-01-02 15:04:05"))
+
 		var deletePaths []string = utils.RemoveArrayInSideSpace(strings.Split(props["deletePaths"], ","))
 
 		for _, val := range deletePaths {
 			if isdirectory, _ := io.IsDirectory(val); isdirectory == true {
-				CompareDirInFiles(val, period.DateCycle)
+				compareDirInFiles(val, compareDate)
 			}
 		}
 	}
 }
 
-func CompareDirInFiles(path string, dateCycle string) {
+func compareDirInFiles(path string, compareDate time.Time) {
 	for i, value := range io.FilePathWalkDir(path, true) {
 		fileInfo, _ := os.Stat(value)
 
 		if fileInfo.IsDir() == true {
-			CompareDirInFiles(value, dateCycle)
-		} else {
-			fileDate := fileInfo.ModTime()
-
-			log.Println("index: " + strconv.Itoa(i) + ", value: " + value + ", CreateTime: " + fileDate.Format("2006-01-02 15:04:05"))
-
-			log.Println(nowDate.Format("2006-01-02 15:04:05"))
+			compareDirInFiles(value, compareDate)
+			continue
 		}
+		fileDate := fileInfo.ModTime()
+
+		log.Println("index: " + strconv.Itoa(i) + ", value: " + value + ", CreateTime: " + fileDate.Format("2006-01-02 15:04:05"))
 	}
 }
 
-func CheckDateCycle(str string) bool {
+func checkDateCycle(str string) bool {
 	for _, val := range dateCycleSuffix {
 		if strings.HasSuffix(str, val) == true && utils.IsStringToInt(str[:len(str)-1]) == true {
 			return true
 		}
 	}
 	return false
+}
+
+func getDateCycle(dateCycle string) (int, int, int) {
+	var year, month, day int
+
+	number, _ := strconv.Atoi(dateCycle[:len(dateCycle)-1])
+	dcs := dateCycle[len(dateCycle)-1 : len(dateCycle)]
+
+	switch dcs {
+	case "y":
+		year = number
+		break
+	case "m":
+		month = number
+		break
+	case "d":
+		day = number
+		break
+	}
+
+	return -year, -month, -day
 }
