@@ -61,6 +61,10 @@ func compareDirInFiles(path string, compareDate time.Time) {
 		fileDate := fileInfo.ModTime()
 
 		log.Println("index: " + strconv.Itoa(i) + ", value: " + value + ", CreateTime: " + fileDate.Format("2006-01-02 15:04:05"))
+
+		if compareDate.Year() <= fileDate.Year() && compareDate.Month() <= fileDate.Month() && compareDate.Day() <= fileDate.Day() == false {
+			log.Println("삭제 대상")
+		}
 	}
 }
 
