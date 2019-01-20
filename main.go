@@ -16,6 +16,8 @@ var dateCycleSuffix = [...]string{"d", "m", "y"}
 var propertiy string = "period_delete.properties"
 var nowDate time.Time = time.Now() //.AddDate(0, 0, -7)
 
+var deleteFiles []string
+
 func main() {
 	log.Println("Period Delete Process Start.")
 
@@ -48,6 +50,12 @@ func main() {
 			}
 		}
 	}
+
+	log.Println("===============================제거 된 파일 리스트===============================")
+	for _, str := range deleteFiles {
+		log.Println(str)
+	}
+	log.Println("===============================================================================")
 }
 
 func compareDirInFiles(path string, compareDate time.Time) {
@@ -63,7 +71,11 @@ func compareDirInFiles(path string, compareDate time.Time) {
 		log.Println("index: " + strconv.Itoa(i) + ", value: " + value + ", CreateTime: " + fileDate.Format("2006-01-02 15:04:05"))
 
 		if compareDate.Year() <= fileDate.Year() && compareDate.Month() <= fileDate.Month() && compareDate.Day() <= fileDate.Day() == false {
-			log.Println("삭제 대상")
+			if err := os.Remove(value); utils.IsError(err) == true {
+				log.Println(err.Error())
+			} else {
+				deleteFiles = append(deleteFiles, value)
+			}
 		}
 	}
 }
